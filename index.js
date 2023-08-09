@@ -1,5 +1,17 @@
 import express from "express";
 import path from "path";
+import mongoose, { mongo } from "mongoose"
+
+mongoose.connect("mongodb+srv://anirudhparida:Anirudhmongo08@cluster0.t4aricu.mongodb.net/")
+.then(() => {console.log("Connected to DB")})
+.catch(() => {console.log("error connecting to DB")})
+
+const messageSchema = new mongoose.Schema({
+    name: String,
+    email: String
+})
+
+const Message = mongoose.model("Message", messageSchema)
 
 const app = express();
 const port = 3000;
@@ -18,6 +30,7 @@ const users=[]
 //setting view engine
 app.set("view engine", "ejs");
 
+
 //rendering html file
 app.get("/inputs", (req, res) => {
     res.render("index");
@@ -32,9 +45,8 @@ app.get("/getjson", (req, res) => {
 });
 
 //posting user data
-app.post('/details', (req, res) => {
-    const newUser = { name: req.body.name, email: req.body.email };
-    users.push(newUser);
+app.post('/details', async (req, res) => {
+    await Message.create({name: req.body.name, email: req.body.email})
     res.render('details', {  });
 });
 
